@@ -2,7 +2,7 @@
 // merges two sorted arrays into one
 // this is a generalization of the standard merge and a binary search
 fn finger_merge<T: Ord + Clone + std::fmt::Debug>(in_a: &[T], in_b: &[T]) -> Vec<T> {
-            println!("mergere, {:?} {:?}", in_a, in_b);
+    println!("mergere, {:?} {:?}", in_a, in_b);
     let a: &[T];
     let b: &[T];
 
@@ -21,11 +21,11 @@ fn finger_merge<T: Ord + Clone + std::fmt::Debug>(in_a: &[T], in_b: &[T]) -> Vec
 
     if b.len() == 0 {
         out.extend_from_slice(a);
-    println!("return {:?}", out);
+        println!("return {:?}", out);
         return out;
     }
 
-    
+
     let mut a_finger_ptr: usize = 0;
     let mut a_prev_ptr: usize = 0;
     let mut b_prev_ptr: usize = 0;
@@ -36,67 +36,43 @@ fn finger_merge<T: Ord + Clone + std::fmt::Debug>(in_a: &[T], in_b: &[T]) -> Vec
     };
 
     loop { 
-    match (a_finger_ptr<b.len() , b_ptr<b.len()) {
-        (true, true) => {
-        if b[ b_ptr ] < a[ calculate_finger(a_finger_ptr) ] {
-        println!("b+=1, {}({}), {}, {:?}, {:?}", a_finger_ptr, calculate_finger(a_finger_ptr),b_ptr, a, b);
+        if a_finger_ptr<b.len() && b_ptr<b.len() && b[b_ptr] < a[calculate_finger(a_finger_ptr)] {
+            //println!("b+=1, {}({}), {}, {:?}, {:?}", a_finger_ptr, calculate_finger(a_finger_ptr),b_ptr, a, b);
             b_ptr += 1;
         }
-        else {
-        println!("a+=1, {}({}), {}, {:?}, {:?}", a_finger_ptr, calculate_finger(a_finger_ptr),b_ptr, a, b);
-            out.extend_from_slice(& finger_merge(
-                    &a[a_prev_ptr .. calculate_finger(a_finger_ptr)],
-                    &b[b_prev_ptr .. b_ptr]
-                    ));
-            out.push(a[calculate_finger(a_finger_ptr)].clone());
+        else if a_finger_ptr<b.len() &&
+            ((b_ptr<b.len() && b[b_ptr] >= a[calculate_finger(a_finger_ptr)])
+             || b_ptr>=b.len()) {
+                 //println!("a+=1, {}({}), {}, {:?}, {:?}", a_finger_ptr, calculate_finger(a_finger_ptr),b_ptr, a, b);
+                 out.extend_from_slice(& finger_merge(
+                         &a[a_prev_ptr .. calculate_finger(a_finger_ptr)],
+                         &b[b_prev_ptr .. b_ptr]
+                         ));
+                 out.push(a[calculate_finger(a_finger_ptr)].clone());
 
-            a_prev_ptr = calculate_finger(a_finger_ptr)+1;
-            a_finger_ptr += 1;
-            b_prev_ptr = b_ptr;
+                 a_prev_ptr = calculate_finger(a_finger_ptr)+1;
+                 a_finger_ptr += 1;
+                 b_prev_ptr = b_ptr;
+             }
+        else if a_finger_ptr>=b.len() {
+
+            //println!("other 1, {}({}), {}, {:?}, {:?}", a_finger_ptr, calculate_finger(a_finger_ptr),b_ptr, a, b);
+            out.extend_from_slice(& finger_merge(
+                    &a[a_prev_ptr.. ],
+                    &b[b_prev_ptr .. ]
+                    ));
+            break;
         }
-    },
-    (true,false)  => {
-            out.extend_from_slice(& finger_merge(
-                    &a[a_prev_ptr .. calculate_finger(a_finger_ptr)],
-                    &b[b_prev_ptr .. b_ptr]
-                    ));
-            out.push(a[calculate_finger(a_finger_ptr)].clone());
-
-            a_prev_ptr = calculate_finger(a_finger_ptr)+1;
-            a_finger_ptr += 1;
-            b_prev_ptr = b_ptr;
-
-    println!("other 1, {}({}), {}, {:?}, {:?}", a_finger_ptr, calculate_finger(a_finger_ptr),b_ptr, a, b);
-    out.extend_from_slice(& finger_merge(
-            &a[a_prev_ptr.. ],
-            &b[b_prev_ptr .. ]
-    ));
-
-    break;
-
-    },
-    (false ,true)  => {
-
-    println!("other 2, {}({}), {}, {:?}, {:?}", a_finger_ptr, calculate_finger(a_finger_ptr),b_ptr, a, b);
-    out.extend_from_slice(& finger_merge(
-            &a[a_prev_ptr.. ],
-            &b[b_prev_ptr .. ]
-    ));
-
-    break;
-
-    },
-    _ => {
-        panic!();
-    }
-    
-    }
+        else {
+            panic!("lol");
+        }
     }
 
-    println!("return s sf {:?}", out);
-    assert!(out.len() == a.len() + b.len(), "out.len={} a.len={} b.len={}", out.len(), a.len(), b.len());
-    return out; 
+println!("return s sf {:?}", out);
+assert!(out.len() == a.len() + b.len(), "out.len={} a.len={} b.len={}", out.len(), a.len(), b.len());
+return out; 
 }
+
 
 fn main() {
     let a = vec![0,2,4,6];
