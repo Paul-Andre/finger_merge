@@ -1,10 +1,12 @@
 /// Merges two sorted arrays into one.
 ///
-/// This is a generalization of the standard merge and of binary search and should run in O(m*log(1+n/m)) time.
+/// This is a generalization of the standard merge and of binary search and should run in
+/// O(m*log(1+n/m)) time.
 pub fn finger_merge<T: Ord + Clone >(in_a: &[T], in_b: &[T]) -> Vec<T> {
     let a: &[T];
     let b: &[T];
 
+    // Make sure that a is bigger than b.
     if in_a.len() >= in_b.len() {
         a = in_a;
         b = in_b;
