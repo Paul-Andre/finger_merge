@@ -1,7 +1,12 @@
 /// Merges two sorted arrays into one.
 ///
 /// This is a generalization of the standard merge and of binary search and should run in
-/// O(m*log(1+n/m)) time.
+/// `O(m*log(1+n/m))` time, where `n` is the size of the bigger array and `m` the size of the
+/// smaller one.
+///
+/// It works by separating the big array into equal parts using m "fingers", merges the small array
+/// with the fingers to figure out in which subarray each element should be merged in. Then it
+/// merges elements into that subarray recursively.
 pub fn finger_merge<T: Ord + Clone >(in_a: &[T], in_b: &[T]) -> Vec<T> {
     let a: &[T];
     let b: &[T];
@@ -37,8 +42,8 @@ pub fn finger_merge<T: Ord + Clone >(in_a: &[T], in_b: &[T]) -> Vec<T> {
             b_ptr += 1;
         }
         else if a_finger_ptr<b.len() &&
-            ((b_ptr<b.len() && b[b_ptr] >= a[calculate_finger(a_finger_ptr)])
-             || b_ptr>=b.len())
+            ( (b_ptr<b.len() && b[b_ptr] >= a[calculate_finger(a_finger_ptr)])
+              || b_ptr>=b.len() )
         {
             out.extend_from_slice(& finger_merge(
                     &a[a_prev_ptr .. calculate_finger(a_finger_ptr)],
