@@ -8,18 +8,14 @@
 /// with the fingers to figure out in which subarray each element should be merged in. Then it
 /// merges elements into that subarray recursively.
 pub fn finger_merge<T: Ord + Clone >(in_a: &[T], in_b: &[T]) -> Vec<T> {
-    let a: &[T];
-    let b: &[T];
 
-    // Make sure that a is bigger than b.
+    let (a,b) = 
     if in_a.len() >= in_b.len() {
-        a = in_a;
-        b = in_b;
+        (in_a, in_b)
     }
     else {
-        a = in_b;
-        b = in_a;
-    }
+        (in_b, in_a)
+    };
 
     let mut out = Vec::with_capacity(a.len() + b.len());
 
@@ -37,32 +33,27 @@ pub fn finger_merge<T: Ord + Clone >(in_a: &[T], in_b: &[T]) -> Vec<T> {
         finger * a.len() / b.len()
     };
 
-    loop { 
-        if a_finger_ptr<b.len() && b_ptr<b.len() && b[b_ptr]<a[calculate_finger(a_finger_ptr)] {
+    while a_finger_ptr<b.len() {
+        while b_ptr < b.len() && b[b_ptr] < a[calculate_finger(a_finger_ptr)] {
             b_ptr += 1;
         }
-        else if a_finger_ptr<b.len() &&
-            (b_ptr>=b.len() || b[b_ptr] >= a[calculate_finger(a_finger_ptr)])
-        {
-            out.extend_from_slice(& finger_merge(
-                    &a[a_prev_ptr .. calculate_finger(a_finger_ptr)],
-                    &b[b_prev_ptr .. b_ptr]
-                    ));
-            out.push(a[calculate_finger(a_finger_ptr)].clone());
 
-            a_prev_ptr = calculate_finger(a_finger_ptr)+1;
-            a_finger_ptr += 1;
-            b_prev_ptr = b_ptr;
-        }
-        else {
+        out.extend_from_slice(& finger_merge(
+                &a[a_prev_ptr .. calculate_finger(a_finger_ptr)],
+                &b[b_prev_ptr .. b_ptr]
+                ));
 
-            out.extend_from_slice(& finger_merge(
-                    &a[a_prev_ptr.. ],
-                    &b[b_prev_ptr .. ]
-                    ));
-            break;
-        }
+        out.push(a[calculate_finger(a_finger_ptr)].clone());
+
+        a_prev_ptr = calculate_finger(a_finger_ptr)+1;
+        a_finger_ptr += 1;
+        b_prev_ptr = b_ptr;
     }
+
+    out.extend_from_slice(& finger_merge(
+            &a[a_prev_ptr.. ],
+            &b[b_prev_ptr .. ]
+            ));
 
     return out; 
 }
