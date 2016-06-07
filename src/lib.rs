@@ -42,8 +42,7 @@ pub fn finger_merge<T: Ord + Clone >(in_a: &[T], in_b: &[T]) -> Vec<T> {
             b_ptr += 1;
         }
         else if a_finger_ptr<b.len() &&
-            ( (b_ptr<b.len() && b[b_ptr] >= a[calculate_finger(a_finger_ptr)])
-              || b_ptr>=b.len() )
+            (b_ptr>=b.len() || b[b_ptr] >= a[calculate_finger(a_finger_ptr)])
         {
             out.extend_from_slice(& finger_merge(
                     &a[a_prev_ptr .. calculate_finger(a_finger_ptr)],
@@ -55,16 +54,13 @@ pub fn finger_merge<T: Ord + Clone >(in_a: &[T], in_b: &[T]) -> Vec<T> {
             a_finger_ptr += 1;
             b_prev_ptr = b_ptr;
         }
-        else if a_finger_ptr>=b.len() {
+        else {
 
             out.extend_from_slice(& finger_merge(
                     &a[a_prev_ptr.. ],
                     &b[b_prev_ptr .. ]
                     ));
             break;
-        }
-        else {
-            panic!("This shouldn't happen.");
         }
     }
 
