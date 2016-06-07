@@ -1,14 +1,17 @@
 /// Merges two sorted arrays into one.
 ///
-/// This is a generalization of the standard merge and of binary search and should run in
-/// `O(m*log(1+n/m))` time, where `n` is the size of the bigger array and `m` the size of the
-/// smaller one.
+/// This is a generalization of the standard merge and of binary search and should use
+/// `O(m*log(1+n/m))` comparisons, where `n` is the size of the bigger array and `m` the size of the
+/// smaller one. Global time is still `O(m+n)` since all the elements need to be copied over.
 ///
-/// It works by separating the big array into equal parts using m "fingers", merges the small array
-/// with the fingers to figure out in which subarray each element should be merged in. Then it
-/// merges elements into that subarray recursively.
-pub fn finger_merge<T: Ord + Clone >(in_a: &[T], in_b: &[T]) -> Vec<T> {
+/// It works by separating the big array into equal parts using `m` "fingers", performs a standard
+/// merge between the small array and the array of fingers. By doing so, it figures out in what
+/// subarray of the big array each element of the small array should be merged and does so
+/// recursively.
+///
+pub fn finger_merge<T: Ord + Clone>(in_a: &[T], in_b: &[T]) -> Vec<T> {
 
+    // Make sure that a is bigger than b.
     let (a,b) = 
     if in_a.len() >= in_b.len() {
         (in_a, in_b)
@@ -30,7 +33,7 @@ pub fn finger_merge<T: Ord + Clone >(in_a: &[T], in_b: &[T]) -> Vec<T> {
     let mut b_ptr: usize = 0;
 
     let calculate_finger = |finger: usize| -> usize {
-        finger * a.len() / b.len()
+        (finger + 1) * a.len() / (b.len() + 1)
     };
 
     while a_finger_ptr<b.len() {
@@ -51,7 +54,7 @@ pub fn finger_merge<T: Ord + Clone >(in_a: &[T], in_b: &[T]) -> Vec<T> {
     }
 
     out.extend_from_slice(& finger_merge(
-            &a[a_prev_ptr.. ],
+            &a[a_prev_ptr .. ],
             &b[b_prev_ptr .. ]
             ));
 
@@ -63,7 +66,6 @@ mod tests {
     use super::finger_merge;
 
     extern crate quickcheck;
-
     use self::quickcheck::quickcheck;
 
     fn test_finger_merge_with_one_input<T: Ord + Clone>
@@ -80,9 +82,9 @@ mod tests {
         brute_merged==merged
     }
 
-
     #[test]
     fn finger_merge_quickcheck_i32() {
         quickcheck(test_finger_merge_with_one_input::<i32> as fn(Vec<i32>, Vec<i32>)->bool);
     }
 }
+
